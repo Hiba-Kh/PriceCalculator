@@ -12,19 +12,23 @@ namespace PriceCalculator
         {
             bool isEnd = false;
             string toContinue;
-            float priceAfterTax;
             Store myStore = new Store();
+            String taxRate, discountRate;
             while (!isEnd)
             {
-                Console.WriteLine("please enter the tax rate in term of %");
-                String taxRate = Console.ReadLine();
+                Console.WriteLine("please enter the Tax Rate in term of %");
+                taxRate = Console.ReadLine();
                 Calculator.TaxRate = float.Parse(taxRate) / 100;
-                
+                Console.WriteLine("please enter the Discount Rate in term of %");
+                discountRate = Console.ReadLine();
+                Calculator.DiscountRate = float.Parse(discountRate) / 100;
                 foreach (Product product in myStore.Products)
                 {
-                    priceAfterTax = Calculator.CalculateTax(product.ProductPrice);
-                    Console.WriteLine($"Sample product: Book with name= {product.Name}, UPC= {product.UPC}, Price={product.ProductPrice.value}$ ");
-                    Console.WriteLine($"Product price reported as {product.ProductPrice.value}$ before tax and {priceAfterTax}$ after {taxRate}% tax  ");    
+                    Calculator.CalculateTax(product.ProductPrice);
+                    Calculator.CalculateDiscount(product.ProductPrice);
+                    Console.WriteLine($"Sample product: Book with name= {product.Name}, UPC= {product.UPC}, Price={product.ProductPrice.value}{product.ProductPrice.currency} ");
+                    Console.WriteLine($"Tax = {taxRate}% discount = {discountRate}% tax amount = {Calculator.TaxAmount}{product.ProductPrice.currency}; Discount amount = {Calculator.DiscountAmount}{product.ProductPrice.currency} ");
+                    Console.WriteLine($"Price before = {product.ProductPrice.value}{product.ProductPrice.currency}, price after = {Calculator.CalculateNetPrice((product.ProductPrice))}{product.ProductPrice.currency}");
                 }
                 Console.WriteLine("do you want to enter a new tax rate? y/n");
                 toContinue = Console.ReadLine();
