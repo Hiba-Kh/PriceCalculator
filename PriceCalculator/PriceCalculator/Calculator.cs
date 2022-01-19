@@ -14,13 +14,13 @@ namespace PriceCalculator
         public static float DiscountAmount { get; set; }
         public static float CalculateTax(Price price)
         {
-            TaxAmount = TaxRate * price.value;
-            return TaxAmount;
+            TaxAmount = (float)Math.Round(TaxRate * price.value, price.precision); //TaxRate * price.value;
+            return TaxAmount;// (float)Math.Round(TaxAmount, price.precision);
         }
         public static float CalculateDiscount(Price price)
         {
-            DiscountAmount = DiscountRate * price.value;
-            return DiscountAmount;
+            DiscountAmount = (float)Math.Round(DiscountRate * price.value, price.precision); ;
+            return DiscountAmount;// (float)Math.Round(DiscountAmount, price.precision);
         }
         public static float CalculateNetPrice(Price price)
         {
@@ -29,7 +29,7 @@ namespace PriceCalculator
                 netPrice += TaxAmount;
             if (DiscountAmount > 0)
                 netPrice -= DiscountAmount;
-            return (float)Math.Round(netPrice, price.precision); ;
+            return (float)Math.Round(netPrice, price.precision); 
         }
     }
 }

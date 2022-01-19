@@ -27,8 +27,17 @@ namespace PriceCalculator
                     Calculator.CalculateTax(product.ProductPrice);
                     Calculator.CalculateDiscount(product.ProductPrice);
                     Console.WriteLine($"Sample product: Book with name= {product.Name}, UPC= {product.UPC}, Price={product.ProductPrice.value}{product.ProductPrice.currency} ");
-                    Console.WriteLine($"Tax = {taxRate}% discount = {discountRate}% tax amount = {Calculator.TaxAmount}{product.ProductPrice.currency}; Discount amount = {Calculator.DiscountAmount}{product.ProductPrice.currency} ");
-                    Console.WriteLine($"Price before = {product.ProductPrice.value}{product.ProductPrice.currency}, price after = {Calculator.CalculateNetPrice((product.ProductPrice))}{product.ProductPrice.currency}");
+                    if (float.Parse(discountRate) == 0.0)
+                    {
+                        Console.WriteLine($"Tax = {taxRate}%, no discount");
+                        Console.WriteLine($"price = {Calculator.CalculateNetPrice((product.ProductPrice))}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Tax = {taxRate}%, discount = {discountRate}%");
+                        Console.WriteLine($"price = {Calculator.CalculateNetPrice((product.ProductPrice))}");
+                        Console.WriteLine($"{Calculator.DiscountAmount}{product.ProductPrice.currency} amount which was deduced");
+                    }
                 }
                 Console.WriteLine("do you want to enter a new tax rate? y/n");
                 toContinue = Console.ReadLine();
