@@ -1,0 +1,7 @@
+*.suo
+*.testlog
+*.manifest
+*.sln
+*.exe
+*.pdb
+*.txt
