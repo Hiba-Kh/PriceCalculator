@@ -8,28 +8,41 @@ namespace PriceCalculator
 {
     public class Calculator
     {
-        public static float TaxRate { get; set; }
-        public static float DiscountRate { get; set; }
-        public static float TaxAmount { get; set; }
-        public static float DiscountAmount { get; set; }
-        public static float CalculateTax(Price price)
+        public  float TaxRate { get; set; }
+        public float DiscountRate { get; set; }
+        private float _discountAmount;
+        private float _taxAmount;
+        public  void CalculateTax(Price price)
         {
-            TaxAmount = (float)Math.Round(TaxRate * price.value, price.precision); //TaxRate * price.value;
-            return TaxAmount;// (float)Math.Round(TaxAmount, price.precision);
+            _taxAmount = (float)Math.Round(TaxRate * price.value, price.precision);
         }
-        public static float CalculateDiscount(Price price)
+        public  void CalculateDiscount(Price price)
         {
-            DiscountAmount = (float)Math.Round(DiscountRate * price.value, price.precision); ;
-            return DiscountAmount;// (float)Math.Round(DiscountAmount, price.precision);
+            _discountAmount = (float)Math.Round(DiscountRate * price.value, price.precision); 
         }
-        public static float CalculateNetPrice(Price price)
+        public  float CalculateNetPrice(Price price)
         {
             float netPrice = price.value;
-            if (TaxAmount > 0)
-                netPrice += TaxAmount;
-            if (DiscountAmount > 0)
-                netPrice -= DiscountAmount;
+            if (_taxAmount > 0)
+                netPrice += _taxAmount;
+            if (_discountAmount > 0)
+                netPrice -= _discountAmount;
             return (float)Math.Round(netPrice, price.precision); 
+        }
+        public void DoCalculations(float taxRate, float discountRate)
+        {
+            Store myStore = new Store();
+            TaxRate = taxRate/100;
+            DiscountRate = discountRate/100;
+            float netPrice;
+            foreach (Product product in myStore.Products)
+            {
+                CalculateTax(product.ProductPrice);
+                CalculateDiscount(product.ProductPrice);
+                netPrice = CalculateNetPrice((product.ProductPrice));
+                // TODO check with Karam how to send these info, in separate params or combine it in an object  
+                Formatter.PrintToConsole(taxRate, discountRate, _taxAmount, _discountAmount, netPrice, product);
+            }
         }
     }
 }

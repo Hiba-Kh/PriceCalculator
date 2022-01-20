@@ -1,8 +1,0 @@
-C:\Users\FTS\source\repos\Calculator\PriceCalculator\PriceCalculator\obj\Debug\PriceCalculator.csproj.AssemblyReference.cache
-C:\Users\FTS\source\repos\Calculator\PriceCalculator\PriceCalculator\obj\Debug\PriceCalculator.csproj.SuggestedBindingRedirects.cache
-C:\Users\FTS\source\repos\Calculator\PriceCalculator\PriceCalculator\obj\Debug\PriceCalculator.csproj.CoreCompileInputs.cache
-C:\Users\FTS\source\repos\Calculator\PriceCalculator\PriceCalculator\bin\Debug\PriceCalculator.exe.config
-C:\Users\FTS\source\repos\Calculator\PriceCalculator\PriceCalculator\bin\Debug\PriceCalculator.exe
-C:\Users\FTS\source\repos\Calculator\PriceCalculator\PriceCalculator\bin\Debug\PriceCalculator.pdb
-C:\Users\FTS\source\repos\Calculator\PriceCalculator\PriceCalculator\obj\Debug\PriceCalculator.exe
-C:\Users\FTS\source\repos\Calculator\PriceCalculator\PriceCalculator\obj\Debug\PriceCalculator.pdb
