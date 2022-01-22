@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace PriceCalculator
 {
     public enum Currency
@@ -26,10 +21,8 @@ namespace PriceCalculator
   
     public class Product
     {
-    
         public string Name { get; set; }
         public int UPC { get; set; }
-        public Price ProductPrice { get; set; }
-        
+        public Price ProductPrice { get; set; }   
     }
 }

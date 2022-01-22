@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PriceCalculator
 {
@@ -10,23 +6,19 @@ namespace PriceCalculator
     {
         static void Main(string[] args)
         {
-            bool isEnd = false;
-            string toContinue;
+            float discountAmount, taxAmount, netPrice;
+            Store myStore = new Store();
             Calculator calculator = new Calculator();
-            String taxRate, discountRate;
-            while (!isEnd)
+            Console.WriteLine("please enter the Tax Rate in term of %");
+            float taxRate = float.Parse(Console.ReadLine());
+            Console.WriteLine("please enter the Discount Rate in term of %");
+            float discountRate = float.Parse(Console.ReadLine());
+            foreach (Product product in myStore.Products)
             {
-                Console.WriteLine("please enter the Tax Rate in term of %");
-                taxRate = Console.ReadLine();
-                Console.WriteLine("please enter the Discount Rate in term of %");
-                discountRate = Console.ReadLine();
-                calculator.DoCalculations(float.Parse(taxRate), float.Parse(discountRate)); 
-                Console.WriteLine("do you want to enter a new tax rate? y/n");
-                toContinue = Console.ReadLine();
-                if (toContinue.ToUpper() == "Y")
-                    isEnd = false;
-                else if (toContinue.ToUpper() == "N")
-                    return;
+               taxAmount = calculator.CalculateTax(product.ProductPrice, discountRate);
+               discountAmount = calculator.CalculateTax(product.ProductPrice, taxRate);
+               netPrice = calculator.CalculateNetPrice(product.ProductPrice, taxRate, discountRate);
+               Formatter.PrintToConsole(discountRate, taxAmount, discountAmount, netPrice, product);
             }
             Console.ReadLine();
         }
