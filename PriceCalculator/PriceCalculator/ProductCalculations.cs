@@ -2,23 +2,21 @@
 
 namespace PriceCalculator
 {
+    public class ProductCalculationsResult
+    {
+        public float TaxAmount { get; set; }
+        public float UPCDiscountAmount { get; set; }
+        public float DiscountAmount { get; set; }
+        public float NetPrice { get; set; }
+
+    }
     public class ProductCalculations
     {
         public float TaxRate { get; set; }
         public float DiscountRate { get; set; }
         private Calculator Calculator { get; set; }
         public float UPCDiscountRate { get; set; }
-        public string UPCForDiscount { get; set; }
-        public ProductCalculationsResult Result { get; set; }
-
-        public class ProductCalculationsResult
-        { 
-            public float TaxAmount { get; set; }
-            public float UPCDiscountAmount { get; set; }
-            public float DiscountAmount { get; set; }
-            public float NetPrice { get; set; }
-
-        }
+        public string UPCForDiscount { get; set; }       
 
         public ProductCalculations(float taxRate, float discountRate, float upcDiscountRate, string upc)
          {
@@ -29,33 +27,49 @@ namespace PriceCalculator
             UPCForDiscount = upc;
          }
         
-        public void CalculateDiscount(Price price)
+        public float CalculateDiscount(Price price, float rate)
         {
-            Result.DiscountAmount = Calculator.DoCalculation(price, DiscountRate);
+             return Calculator.DoCalculation(price, rate);
         }
-        public void CalculateTax(Price price)
+        public float CalculateTax(Price price)
         {
-            Result.TaxAmount = Calculator.DoCalculation(price, TaxRate);
+             return Calculator.DoCalculation(price, TaxRate);
         }
-        public void CalculateUPCDiscount(Price price)
+        public ProductCalculationsResult DoProductCalculations(Product product)
         {
-            Result.UPCDiscountAmount = Calculator.DoCalculation(price, UPCDiscountRate);
-        }
-        public void DoProductCalculations(Product product)
-        {
-            Result = new ProductCalculationsResult();
+            var result = new ProductCalculationsResult();
+            result.TaxAmount = CalculateTax(product.ProductPrice);
+            result.DiscountAmount = CalculateDiscount(product.ProductPrice, DiscountRate);
             float netPrice = product.ProductPrice.value;
-            CalculateTax(product.ProductPrice);
-            CalculateDiscount(product.ProductPrice);
+            
+            if (product.UPC == UPCForDiscount)
+            {
+                result.UPCDiscountAmount = CalculateDiscount(product.ProductPrice, UPCDiscountRate);
+                netPrice -= result.UPCDiscountAmount;
+            }
+            netPrice += result.TaxAmount;
+            netPrice -= result.DiscountAmount;
+            result.NetPrice = (float)Math.Round(netPrice, product.ProductPrice.precision);
+            return result;
+        }
+        public ProductCalculationsResult DoPrecedableCalculations(Product product)
+        {
+            var result = new ProductCalculationsResult();
+            float netPrice = product.ProductPrice.value;
+            Price price = new Price(netPrice, product.ProductPrice.currency, product.ProductPrice.precision);
 
             if (product.UPC == UPCForDiscount)
             {
-                CalculateUPCDiscount(product.ProductPrice);
-                netPrice -= Result.UPCDiscountAmount;
+                result.UPCDiscountAmount = CalculateDiscount(product.ProductPrice, UPCDiscountRate);
+                netPrice -= result.UPCDiscountAmount;
+                result.TaxAmount = CalculateTax(price);
+                result.DiscountAmount = CalculateDiscount(price, DiscountRate);
+                netPrice += result.TaxAmount;
+                netPrice -= result.DiscountAmount;
+                result.NetPrice = (float)Math.Round(netPrice, product.ProductPrice.precision);
             }
-            netPrice += Result.TaxAmount;
-            netPrice -= Result.DiscountAmount;
-            Result.NetPrice = (float)Math.Round(netPrice, product.ProductPrice.precision);
+            else result = DoProductCalculations(product);
+            return result;
         }
     }
 }
