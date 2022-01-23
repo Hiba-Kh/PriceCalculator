@@ -22,7 +22,7 @@ namespace PriceCalculator
     public class Product
     {
         public string Name { get; set; }
-        public int UPC { get; set; }
+        public string UPC { get; set; }
         public Price ProductPrice { get; set; }   
     }
 }
