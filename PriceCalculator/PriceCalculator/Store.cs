@@ -23,10 +23,11 @@ namespace PriceCalculator
         };
         public List<Cost> AdditionalCosts { get; } = new List<Cost>()
         {
-            new Cost() {Type = CostType.Percentage, Description = "Packaging", Value = 1},
-            new Cost() {Type = CostType.Absolute, Description = "Transport", Value = 2.2f},
+            //new Cost() {Type = CostType.Percentage, Description = "Packaging", Value = 1},
+            //new Cost() {Type = CostType.Absolute, Description = "Transport", Value = 2.2f},
         };
-          
+
+        public Cost Cap { get; set; } = new Cost() { Type = CostType.Percentage, Value = 30};
     }
 }
 //only data

@@ -34,7 +34,7 @@ namespace PriceCalculator
  
             foreach (Product product in myStore.Products)
             {
-                productCalculationsResult = productCalculations.DoProductCalculations(product, myStore.AdditionalCosts, isMultiplicative);
+                productCalculationsResult = productCalculations.DoProductCalculations(product, myStore.AdditionalCosts, isMultiplicative, myStore.Cap);
                 if (productCalculationsResult.DiscountAmount == 0)
                     Formatter.PrintResultWithoutDiscount(productCalculationsResult, product);
                 else
