@@ -19,16 +19,18 @@ namespace PriceCalculator
             UPC = Console.ReadLine();
 
             var productCalculations = new ProductCalculations(taxRate, discountRate, UPCDiscountRate, UPC);
-            ProductCalculationsResult result;
+            ProductCalculationsResult productCalculationsResult;
             Store myStore = new Store();
+ 
             foreach (Product product in myStore.Products)
             {
-                result = productCalculations.DoPrecedableCalculations(product);
-                if (result.DiscountAmount == 0)
-                Formatter.PrintResultWithoutDiscount(result, product);
+                productCalculationsResult = productCalculations.DoProductCalculations(product, myStore.AdditionalCosts);
+                if (productCalculationsResult.DiscountAmount == 0)
+                    Formatter.PrintResultWithoutDiscount(productCalculationsResult, product);
                 else
-                    Formatter.PrintResultWithDiscount(result, product);
+                    Formatter.PrintResultWithDiscount(productCalculationsResult, product);
             }
+
             Console.ReadLine();
         }
     }

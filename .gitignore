@@ -803,6 +803,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+*.testlog
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 

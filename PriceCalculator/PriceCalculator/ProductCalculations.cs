@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PriceCalculator
 {
@@ -8,6 +9,8 @@ namespace PriceCalculator
         public float UPCDiscountAmount { get; set; }
         public float DiscountAmount { get; set; }
         public float NetPrice { get; set; }
+        public Dictionary<string, float> AdditionalCosts { get; set; } = new Dictionary<string, float>();
+        public bool HasAdditionalCosts { get; set; }
 
     }
     public class ProductCalculations
@@ -26,33 +29,41 @@ namespace PriceCalculator
             UPCDiscountRate = upcDiscountRate;
             UPCForDiscount = upc;
          }
-        
-        public float CalculateDiscount(Price price, float rate)
+
+        public float CalculateRateAmount(Price price, float rate)
         {
-             return Calculator.DoCalculation(price, rate);
+            return Calculator.DoCalculation(price, rate);
         }
-        public float CalculateTax(Price price)
-        {
-             return Calculator.DoCalculation(price, TaxRate);
-        }
-        public ProductCalculationsResult DoProductCalculations(Product product)
+
+        public ProductCalculationsResult DoProductCalculations(Product product, List<Cost> AdditionalCosts)
         {
             var result = new ProductCalculationsResult();
-            result.TaxAmount = CalculateTax(product.ProductPrice);
-            result.DiscountAmount = CalculateDiscount(product.ProductPrice, DiscountRate);
+            result.TaxAmount = CalculateRateAmount(product.ProductPrice, TaxRate);
+            result.DiscountAmount = CalculateRateAmount(product.ProductPrice, DiscountRate);
             float netPrice = product.ProductPrice.value;
-            
+
             if (product.UPC == UPCForDiscount)
             {
-                result.UPCDiscountAmount = CalculateDiscount(product.ProductPrice, UPCDiscountRate);
+                result.UPCDiscountAmount = CalculateRateAmount(product.ProductPrice, UPCDiscountRate);
                 netPrice -= result.UPCDiscountAmount;
             }
             netPrice += result.TaxAmount;
             netPrice -= result.DiscountAmount;
-            result.NetPrice = (float)Math.Round(netPrice, product.ProductPrice.precision);
+            float costValue;
+            float netCost = 0.0f;
+            foreach (Cost cost in AdditionalCosts)
+            {
+                costValue = DoCostsCalculations(product, cost);
+                result.AdditionalCosts.Add(cost.Description, costValue);
+                netCost += costValue;
+            }
+            if (netCost > 0.0f)
+                result.HasAdditionalCosts = true;
+            result.NetPrice = (float)Math.Round((netPrice + netCost), product.ProductPrice.precision);
             return result;
         }
-        public ProductCalculationsResult DoPrecedableCalculations(Product product)
+
+        public ProductCalculationsResult DoPrecedableCalculations(Product product, List<Cost> additionalCosts)
         {
             var result = new ProductCalculationsResult();
             float netPrice = product.ProductPrice.value;
@@ -60,16 +71,26 @@ namespace PriceCalculator
 
             if (product.UPC == UPCForDiscount)
             {
-                result.UPCDiscountAmount = CalculateDiscount(product.ProductPrice, UPCDiscountRate);
+                result.UPCDiscountAmount = CalculateRateAmount(product.ProductPrice, UPCDiscountRate);
                 netPrice -= result.UPCDiscountAmount;
-                result.TaxAmount = CalculateTax(price);
-                result.DiscountAmount = CalculateDiscount(price, DiscountRate);
+                result.TaxAmount = CalculateRateAmount(price, TaxRate);
+                result.DiscountAmount = CalculateRateAmount(price, DiscountRate);
                 netPrice += result.TaxAmount;
                 netPrice -= result.DiscountAmount;
                 result.NetPrice = (float)Math.Round(netPrice, product.ProductPrice.precision);
             }
-            else result = DoProductCalculations(product);
+            else result = DoProductCalculations(product, additionalCosts);
             return result;
         }
+        public float DoCostsCalculations(Product product, Cost cost)
+        {
+            if (cost.Type == CostType.Absolute)
+                return cost.Value;
+            else if (cost.Type == CostType.Percentage)
+                return Calculator.DoCalculation(product.ProductPrice, cost.Value);
+            return 0.0f;
+        }
+       
+
     }
 }
