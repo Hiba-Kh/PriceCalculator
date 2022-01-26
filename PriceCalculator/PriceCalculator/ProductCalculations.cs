@@ -29,30 +29,26 @@ namespace PriceCalculator
             UPCForDiscount = upc;
          }
 
-        public float CalculateRateAmount(Price price, float rate)
+        private float CalculateRateAmount(Price price, float rate)
         {
             return Calculator.DoCalculation(price, rate);
         }
 
-        public ProductCalculationsResult DoProductCalculations(Product product, List<Cost> AdditionalCosts, bool isMultiplicative, Cost cap = null)
+        public ProductCalculationsResult DoProductCalculations(Product product, List<Cost> AdditionalCosts, bool isMultiplicative, Cost cap = null, Currency requestedCurrency = Currency.USD)
         {
-            var result = new ProductCalculationsResult();
-            result.TaxAmount = CalculateRateAmount(product.ProductPrice, TaxRate);
-            result.DiscountAmount = CalculateRateAmount(product.ProductPrice, DiscountRate);
-            float netPrice = product.ProductPrice.value;
-
-            if (product.UPC == UPCForDiscount)
+            if (requestedCurrency != Currency.USD)
             {
-                Price priceAfterFirstDiscount = new Price(product.ProductPrice.value - result.DiscountAmount, product.ProductPrice.currency, product.ProductPrice.precision);
-                if (isMultiplicative)
-                {
-                    result.DiscountAmount += CalculateRateAmount(priceAfterFirstDiscount, UPCDiscountRate);
-                }
-                else
-                {
-                    result.DiscountAmount += CalculateRateAmount(product.ProductPrice, UPCDiscountRate);
-                }
+                float newPriceValue = ConvertPriceValueToRequestedCurrency(product.ProductPrice.value, requestedCurrency, product.ProductPrice.precision);
+                product.ProductPrice = new Price(newPriceValue, requestedCurrency, product.ProductPrice.precision);
             }
+            var result = new ProductCalculationsResult
+            {
+                TaxAmount = CalculateRateAmount(product.ProductPrice, TaxRate),
+                DiscountAmount = CalculateRateAmount(product.ProductPrice, DiscountRate)
+            };
+            float netPrice = product.ProductPrice.value;
+            if (product.UPC == UPCForDiscount)
+                result.DiscountAmount += CalculateUPCDiscountIfExists(product, isMultiplicative, result.DiscountAmount);
             float capAmount = CalculateCapAmount(cap, product.ProductPrice);
             if (result.DiscountAmount > capAmount)
                 result.DiscountAmount = capAmount;
@@ -62,7 +58,7 @@ namespace PriceCalculator
             float netCost = 0.0f;
             foreach (Cost cost in AdditionalCosts)
             {
-                costValue = DoCostsCalculations(product, cost);
+                costValue = DoCostsCalculations(product, cost, requestedCurrency);
                 result.AdditionalCosts.Add(cost.Description, costValue);
                 netCost += costValue;
             }
@@ -70,6 +66,26 @@ namespace PriceCalculator
                 result.HasAdditionalCosts = true;
             result.NetPrice = (float)Math.Round((netPrice + netCost), product.ProductPrice.precision);
             return result;
+        }
+
+        private float CalculateUPCDiscountIfExists(Product product, bool isMultiplicative, float discountAmount)
+        {
+            Price priceAfterFirstDiscount = new Price(product.ProductPrice.value - discountAmount, product.ProductPrice.currency, product.ProductPrice.precision);
+            if (isMultiplicative)
+                return CalculateRateAmount(priceAfterFirstDiscount, UPCDiscountRate);
+            else
+                return CalculateRateAmount(product.ProductPrice, UPCDiscountRate);
+        }
+
+        private float ConvertPriceValueToRequestedCurrency(float priceValue, Currency requestedCurrency, int precision)
+        {
+            if (requestedCurrency == Currency.GBP)
+                return CurrencyConverter.ConvertPriceValueToGBP(priceValue, precision);
+            else if (requestedCurrency == Currency.EUR)
+                return CurrencyConverter.ConvertPriceValueToEUR(priceValue, precision);
+            else if (requestedCurrency == Currency.JPY)
+                return CurrencyConverter.ConvertPriceValueToJPY(priceValue, precision);
+            return 0;
         }
 
         private float CalculateCapAmount(Cost cap, Price price)
@@ -98,14 +114,22 @@ namespace PriceCalculator
             else result = DoProductCalculations(product, additionalCosts, false);
             return result;
         }
-        public float DoCostsCalculations(Product product, Cost cost)
+        private float DoCostsCalculations(Product product, Cost cost, Currency requestedCurrency)
         {
             if (cost.Type == CostType.Absolute)
+            {
+
+                if (requestedCurrency != Currency.USD)
+                {
+                    return ConvertPriceValueToRequestedCurrency(cost.Value, requestedCurrency, cost.Precision);
+                }
                 return cost.Value;
+            }
             else if (cost.Type == CostType.Percentage)
                 return Calculator.DoCalculation(product.ProductPrice, cost.Value);
             return 0.0f;
         }
+       
        
 
     }

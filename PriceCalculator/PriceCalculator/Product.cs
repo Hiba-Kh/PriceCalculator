@@ -3,7 +3,10 @@ namespace PriceCalculator
 {
     public enum Currency
     {
-        USD
+        USD = 1,
+        GBP,
+        JPY,
+        EUR
     }
 
     public struct Price

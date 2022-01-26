@@ -13,6 +13,7 @@ namespace PriceCalculator
         public string Description { get; set; }
         public CostType Type { get; set; }
         public float Value { get; set; }
+        public int Precision { get; set; } = 2;
     }
     public class Store
     {
@@ -23,8 +24,8 @@ namespace PriceCalculator
         };
         public List<Cost> AdditionalCosts { get; } = new List<Cost>()
         {
-            //new Cost() {Type = CostType.Percentage, Description = "Packaging", Value = 1},
-            //new Cost() {Type = CostType.Absolute, Description = "Transport", Value = 2.2f},
+            new Cost() {Type = CostType.Percentage, Description = "Packaging", Value = 1},
+            new Cost() {Type = CostType.Absolute, Description = "Transport", Value = 2.2f},
         };
 
         public Cost Cap { get; set; } = new Cost() { Type = CostType.Percentage, Value = 30};

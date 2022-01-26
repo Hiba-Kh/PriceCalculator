@@ -20,6 +20,7 @@ namespace PriceCalculator
             Console.WriteLine($"Sample product: Book with name= {product.Name}, UPC= {product.UPC}, Price={product.ProductPrice.value}{product.ProductPrice.currency} ");
             if (result.HasAdditionalCosts)
                 PrintAdditionalCost(result.AdditionalCosts, product.ProductPrice.currency);
+            Console.WriteLine($"Tax = {result.TaxAmount}{product.ProductPrice.currency}");
             Console.WriteLine($"Total = {result.NetPrice}{product.ProductPrice.currency}");
         }
        
