@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PriceCalculator
 {
@@ -16,12 +13,14 @@ namespace PriceCalculator
             Console.WriteLine($"Discounts = {result.DiscountAmount + result.UPCDiscountAmount}{product.ProductPrice.currency}");
             if (result.HasAdditionalCosts)
               PrintAdditionalCost(result.AdditionalCosts, product.ProductPrice.currency);
-            Console.WriteLine($"Total = {result.NetPrice}");
+            Console.WriteLine($"Total = {result.NetPrice}{product.ProductPrice.currency}");
         }
         public static void PrintResultWithoutDiscount(ProductCalculationsResult result, Product product)
         {
             Console.WriteLine($"Sample product: Book with name= {product.Name}, UPC= {product.UPC}, Price={product.ProductPrice.value}{product.ProductPrice.currency} ");
-            Console.WriteLine($"price = {result.NetPrice}");
+            if (result.HasAdditionalCosts)
+                PrintAdditionalCost(result.AdditionalCosts, product.ProductPrice.currency);
+            Console.WriteLine($"Total = {result.NetPrice}{product.ProductPrice.currency}");
         }
        
         public static void PrintAdditionalCost(Dictionary<string, float> AdditionalCosts, Currency curreny)

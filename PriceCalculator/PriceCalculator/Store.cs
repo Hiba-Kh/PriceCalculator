@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PriceCalculator
 {
@@ -27,7 +24,7 @@ namespace PriceCalculator
         public List<Cost> AdditionalCosts { get; } = new List<Cost>()
         {
             new Cost() {Type = CostType.Percentage, Description = "Packaging", Value = 1},
-            new Cost() {Type = CostType.Absolute, Description = "Transport", Value = 0 }//2.2f},
+            new Cost() {Type = CostType.Absolute, Description = "Transport", Value = 2.2f},
         };
           
     }

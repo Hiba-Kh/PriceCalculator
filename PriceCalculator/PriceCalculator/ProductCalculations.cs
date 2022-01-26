@@ -35,17 +35,27 @@ namespace PriceCalculator
             return Calculator.DoCalculation(price, rate);
         }
 
-        public ProductCalculationsResult DoProductCalculations(Product product, List<Cost> AdditionalCosts)
+        public ProductCalculationsResult DoProductCalculations(Product product, List<Cost> AdditionalCosts, bool isMultiplicative)
         {
             var result = new ProductCalculationsResult();
             result.TaxAmount = CalculateRateAmount(product.ProductPrice, TaxRate);
             result.DiscountAmount = CalculateRateAmount(product.ProductPrice, DiscountRate);
             float netPrice = product.ProductPrice.value;
 
+            
+
             if (product.UPC == UPCForDiscount)
             {
-                result.UPCDiscountAmount = CalculateRateAmount(product.ProductPrice, UPCDiscountRate);
-                netPrice -= result.UPCDiscountAmount;
+                Price priceAfterFirstDiscount = new Price(product.ProductPrice.value - result.DiscountAmount, product.ProductPrice.currency, product.ProductPrice.precision);
+                if (isMultiplicative)
+                {
+                    result.UPCDiscountAmount = CalculateRateAmount(priceAfterFirstDiscount, UPCDiscountRate);
+                }
+                else
+                {
+                    result.UPCDiscountAmount = CalculateRateAmount(product.ProductPrice, UPCDiscountRate);
+                }
+               netPrice -= result.UPCDiscountAmount;
             }
             netPrice += result.TaxAmount;
             netPrice -= result.DiscountAmount;
@@ -79,7 +89,7 @@ namespace PriceCalculator
                 netPrice -= result.DiscountAmount;
                 result.NetPrice = (float)Math.Round(netPrice, product.ProductPrice.precision);
             }
-            else result = DoProductCalculations(product, additionalCosts);
+            else result = DoProductCalculations(product, additionalCosts, false);
             return result;
         }
         public float DoCostsCalculations(Product product, Cost cost)
