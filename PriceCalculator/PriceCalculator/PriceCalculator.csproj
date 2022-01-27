@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Calculator.cs" />
     <Compile Include="CurrencyConverter.cs" />
+    <Compile Include="FloatExtensions.cs" />
     <Compile Include="Formatter.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="ProductCalculations.cs" />

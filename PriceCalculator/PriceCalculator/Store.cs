@@ -13,14 +13,14 @@ namespace PriceCalculator
         public string Description { get; set; }
         public CostType Type { get; set; }
         public float Value { get; set; }
-        public int Precision { get; set; } = 2;
+        public int Precision { get; set; } = 4;
     }
     public class Store
     {
         public List<Product> Products { get; } = new List<Product>()
         {
-            new Product() { Name = "The Little Prince", UPC = "12345", ProductPrice = new Price(20.25f, Currency.USD, 2 )},
-            new Product() { Name = "Dependency Injection", UPC = "6789", ProductPrice = new Price(100.0f, Currency.USD, 2 )}
+            new Product() { Name = "The Little Prince", UPC = "12345", ProductPrice = new Price(20.25f, Currency.USD, 4 )},
+            new Product() { Name = "Dependency Injection", UPC = "6789", ProductPrice = new Price(100.0f, Currency.USD, 4 )}
         };
         public List<Cost> AdditionalCosts { get; } = new List<Cost>()
         {

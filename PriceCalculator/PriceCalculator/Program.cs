@@ -21,6 +21,7 @@ namespace PriceCalculator
             discountRate = float.Parse(Console.ReadLine());
             
             var productCalculations = new ProductCalculations(taxRate, discountRate, 0, "");
+            productCalculations.ResultPrecision = 2;
             ProductCalculationsResult productCalculationsResult;
             Store myStore = new Store();
 

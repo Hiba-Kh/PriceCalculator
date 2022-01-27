@@ -8,6 +8,7 @@ namespace PriceCalculator
         {
             return (float)Math.Round((rate / 100) * price.value, price.precision);
         }
+        
 
     }
 }

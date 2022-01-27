@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PriceCalculator
 {
@@ -10,6 +11,7 @@ namespace PriceCalculator
         public float NetPrice { get; set; }
         public Dictionary<string, float> AdditionalCosts { get; set; } = new Dictionary<string, float>();
         public bool HasAdditionalCosts { get; set; }
+       
 
     }
     public class ProductCalculations
@@ -18,8 +20,8 @@ namespace PriceCalculator
         public float DiscountRate { get; set; }
         private Calculator Calculator { get; set; }
         public float UPCDiscountRate { get; set; }
-        public string UPCForDiscount { get; set; }       
-
+        public string UPCForDiscount { get; set; }
+        public int ResultPrecision { get; set; }
         public ProductCalculations(float taxRate, float discountRate, float upcDiscountRate, string upc)
          {
             Calculator = new Calculator();
@@ -43,7 +45,7 @@ namespace PriceCalculator
             }
             var result = new ProductCalculationsResult
             {
-                TaxAmount = CalculateRateAmount(product.ProductPrice, TaxRate),
+                TaxAmount = (float)CalculateRateAmount(product.ProductPrice, TaxRate),
                 DiscountAmount = CalculateRateAmount(product.ProductPrice, DiscountRate)
             };
             float netPrice = product.ProductPrice.value;
@@ -65,7 +67,21 @@ namespace PriceCalculator
             if (netCost > 0.0f)
                 result.HasAdditionalCosts = true;
             result.NetPrice = (float)Math.Round((netPrice + netCost), product.ProductPrice.precision);
+
+            ConvertCalculationsResultToLowerPrecision(result, ResultPrecision);
             return result;
+        }
+
+        private void ConvertCalculationsResultToLowerPrecision(ProductCalculationsResult result, int precision)
+        {
+            result.NetPrice = result.NetPrice.RoundToPrecision(precision);
+            result.TaxAmount = result.TaxAmount.RoundToPrecision(precision);
+            result.DiscountAmount = result.DiscountAmount.RoundToPrecision(precision);
+            for (int i = result.AdditionalCosts.Count - 1; i >= 0; i--)
+            {
+                var cost = result.AdditionalCosts.ElementAt(i);
+                result.AdditionalCosts[cost.Key] = cost.Value.RoundToPrecision(precision);
+            }
         }
 
         private float CalculateUPCDiscountIfExists(Product product, bool isMultiplicative, float discountAmount)
@@ -129,6 +145,8 @@ namespace PriceCalculator
                 return Calculator.DoCalculation(product.ProductPrice, cost.Value);
             return 0.0f;
         }
+
+      
        
        
 
