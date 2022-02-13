@@ -2,13 +2,11 @@
 
 namespace PriceCalculator
 {
-    public class Calculator
+    public static class Calculator
     {
-        public float DoCalculation(Price price, float rate)
+        public static float DoCalculation(Money price, float rate, int precision = 4)
         {
-            return (float)Math.Round((rate / 100) * price.value, price.precision);
+            return (float)Math.Round((rate / 100) * price.Amount, precision);
         }
-        
-
     }
 }
