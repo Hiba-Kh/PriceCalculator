@@ -9,16 +9,14 @@ namespace PriceCalculator
         EUR
     }
 
-    public struct Price
+    public struct Money
     {
-        public float value;
-        public Currency currency;
-        public int precision;
-        public Price(float value, Currency currency, int precision)
+        public float Amount;
+        public Currency Currency;
+        public Money(float amount, Currency currency)
         {
-            this.value = value;
-            this.currency = currency;
-            this.precision = precision;
+            Amount = amount;
+            Currency = currency;
         }
     }
   
@@ -26,6 +24,6 @@ namespace PriceCalculator
     {
         public string Name { get; set; }
         public string UPC { get; set; }
-        public Price ProductPrice { get; set; }   
+        public Money ProductPrice { get; set; }   
     }
 }
